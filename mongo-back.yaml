@@ -31,7 +31,10 @@ spec:
                 value: "AKIAIOSFODNN7EXAMPLE"
               - name: AWS_SECRET_ACCESS_KEY
                 value: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
-
+              - name: AWS_DEFAULT_REGION
+                value: "cn-northwest-1"
+              - name: S3_ENDPOINT_URL
+                value: "http://192.168.16.231:9444"
               
             command:
             - "/bin/sh"
@@ -40,5 +43,6 @@ spec:
               mkdir -p /home/`date +%Y_%m_%d`
               mongodump -h $MONGO_HOST -p $MONGO_PORT --authenticationDatabase admin  -u $MONGO_ROOT_USER -p $MONGO_ROOT_PASS -o /home/`date +%Y_%m_%d`
               tar -cvf `date +%Y_%m_%d`.tar /home/`date +%Y_%m_%d`
+              aws 
               
   schedule: "* * * * *"
