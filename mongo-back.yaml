@@ -2,6 +2,7 @@ kind: CronJob
 apiVersion: batch/v1beta1
 metadata:
   name: mongo-back
+  namespace: klab
 spec:
   jobTemplate:
     metadata:
@@ -16,10 +17,10 @@ spec:
           restartPolicy: OnFailure
           containers:
           - name: mongo-back
-            image: registry.cn-shanghai.aliyuncs.com/kcr-3rd/pgsqldump:v1
+            image: registry.cn-shanghai.aliyuncs.com/kcr-3rd/mongosqldump:v1
             imagePullPolicy: IfNotPresent
             env:
-              - name: $MONGO_ROOT_USER
+              - name: MONGO_ROOT_USER
                 value: "kesci"
               - name: MONGO_ROOT_PASS
                 value: "heywhale"
@@ -28,21 +29,22 @@ spec:
               - name: MONGO_PORT
                 value: "27017"
               - name: AWS_ACCESS_KEY_ID
-                value: "AKIAIOSFODNN7EXAMPLE"
+                value: "admin"
               - name: AWS_SECRET_ACCESS_KEY
-                value: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+                value: "icSJHfPKpN"
               - name: AWS_DEFAULT_REGION
                 value: "cn-northwest-1"
               - name: S3_ENDPOINT_URL
-                value: "http://192.168.16.231:9444"
+                value: "http://192.168.16.103:9000"
+              - name: S3_BUCKETS
+                value: "heywhale"
               
             command:
             - "/bin/sh"
             - "-c"
             - |
               mkdir -p /home/`date +%Y_%m_%d`
-              mongodump -h $MONGO_HOST -p $MONGO_PORT --authenticationDatabase admin  -u $MONGO_ROOT_USER -p $MONGO_ROOT_PASS -o /home/`date +%Y_%m_%d`
-              tar -cvf `date +%Y_%m_%d`.tar /home/`date +%Y_%m_%d`
-              aws 
-              
-  schedule: "* * * * *"
+              mongodump -h $MONGO_HOST -p $MONGO_PORT --authenticationDatabase admin  -u $MONGO_ROOT_USER -p $MONGO_ROOT_PASS -o /home/`date +%Y_%m_%d`/
+              tar -cvf /home/`date +%Y_%m_%d`.tar /home/`date +%Y_%m_%d`
+              aws s3 cp /home/`date +%Y_%m_%d`.tar s3://$S3_BUCKETS --endpoint $S3_ENDPOINT_URL       
+  schedule: "0 * * * *"
