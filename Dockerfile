@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 FROM mongo:latest
 RUN apt update && \
     apt install awscli  -y
@@ -13,19 +12,3 @@ RUN apt-get clean autoclean && \
 # RUN chmod 777 /usr/bin/mongodump
 # RUN chmod 777 /usr/bin/pg_dumpall
 ## docker build -t registry.cn-shanghai.aliyuncs.com/kcr-3rd/pgsqldump:v1
-=======
-FROM mongo:latest
-RUN apt update && \
-    apt install awscli  -y
-
-WORKDIR /home
-RUN apt-get clean autoclean && \
-    apt-get autoremove --yes && \
-    rm -rf /var/lib/apt/lists/*
-
-# COPY mongodump /usr/bin
-# COPY pg_dumpall /usr/bin
-# RUN chmod 777 /usr/bin/mongodump
-# RUN chmod 777 /usr/bin/pg_dumpall
-## docker build -t registry.cn-shanghai.aliyuncs.com/kcr-3rd/pgsqldump:v1
->>>>>>> c676cfbcb8f707b22fa41e471f2182b6eb409028
