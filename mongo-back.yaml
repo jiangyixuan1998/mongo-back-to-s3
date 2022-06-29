@@ -1,0 +1,45 @@
+kind: CronJob
+apiVersion: batch/v1beta1
+metadata:
+  name: mongo-back
+spec:
+  jobTemplate:
+    metadata:
+      labels:
+        app: mongo-back
+    spec:
+      template:
+        metadata:
+          labels:
+            app: mongo-back
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: mongo-back
+            image: registry.cn-shanghai.aliyuncs.com/kcr-3rd/mongosqldump:v1
+            imagePullPolicy: IfNotPresent
+            env:
+              - name: $MONGO_ROOT_USER
+                value: "kesci"
+              - name: MONGO_ROOT_PASS
+                value: "heywhale"
+              - name: MONGO_HOST
+                value: "192.168.16.235"
+              - name: MONGO_PORT
+                value: "27017"
+              - name: AWS_ACCESS_KEY_ID
+                value: "AKIAIOSFODNN7EXAMPLE"
+              - name: AWS_SECRET_ACCESS_KEY
+                value: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+
+              
+            command:
+            - "/bin/sh"
+            - "-c"
+            - |
+              mkdir -p /home/`date +%Y_%m_%d`
+              mongodump -h $MONGO_HOST -p $MONGO_PORT --authenticationDatabase admin  -u $MONGO_ROOT_USER -p $MONGO_ROOT_PASS -o /home/`date +%Y_%m_%d`
+              tar -cvf `date +%Y_%m_%d`.tar /home/`date +%Y_%m_%d`
+              
+
+  schedule: "* * * * *"
