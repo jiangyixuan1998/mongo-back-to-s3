@@ -21,23 +21,23 @@ spec:
             imagePullPolicy: IfNotPresent
             env:
               - name: MONGO_ROOT_USER
-                value: "kesci"
+                value: "kesci"                             #admin权限的mongo用户名
               - name: MONGO_ROOT_PASS
-                value: "heywhale"
+                value: "heywhale"                          #admin权限的用户名密码
               - name: MONGO_HOST
-                value: "192.168.16.235"
+                value: "192.168.16.235"                    #mongo数据库的host
               - name: MONGO_PORT
-                value: "27017"
+                value: "27017"                             #mongo数据库的端口
               - name: AWS_ACCESS_KEY_ID
-                value: "admin"
+                value: "admin"                             #aws/minio的access_key
               - name: AWS_SECRET_ACCESS_KEY
-                value: "icSJHfPKpN"
+                value: "icSJHfPKpN"                        #aws/minio的secret_key
               - name: AWS_DEFAULT_REGION
-                value: "cn-northwest-1"
+                value: "cn-northwest-1"                    #aws使用的存储区域，minio可以默认不动
               - name: S3_ENDPOINT_URL
-                value: "http://192.168.16.103:9000"
+                value: "http://192.168.16.103:9000"        #aws/minio的url
               - name: S3_BUCKETS
-                value: "heywhale"
+                value: "heywhale"                          #存储数据使用的bucket_name
               
             command:
             - "/bin/sh"
