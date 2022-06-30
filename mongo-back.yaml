@@ -47,4 +47,8 @@ spec:
               mongodump -h $MONGO_HOST -p $MONGO_PORT --authenticationDatabase admin  -u $MONGO_ROOT_USER -p $MONGO_ROOT_PASS -o /home/`date +%Y_%m_%d`/
               tar -cvf /home/`date +%Y_%m_%d`.tar /home/`date +%Y_%m_%d`
               aws s3 cp /home/`date +%Y_%m_%d`.tar s3://$S3_BUCKETS --endpoint $S3_ENDPOINT_URL       
-  schedule: "0 * * * *"
+  schedule: "\"0 1 * * *\""
+  concurrencyPolicy: Forbid
+  suspend: false
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
