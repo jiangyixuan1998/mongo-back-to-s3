@@ -11,4 +11,4 @@ RUN apt-get clean autoclean && \
 # COPY pg_dumpall /usr/bin
 # RUN chmod 777 /usr/bin/mongodump
 # RUN chmod 777 /usr/bin/pg_dumpall
-## docker build -t registry.cn-shanghai.aliyuncs.com/kcr-3rd/pgsqldump:v1
+## docker build -t registry.cn-shanghai.aliyuncs.com/kcr-3rd/mongosqldump:v1
