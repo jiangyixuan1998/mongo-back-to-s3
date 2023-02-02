@@ -1,0 +1,55 @@
+kind: CronJob
+apiVersion: batch/v1beta1
+metadata:
+  name: mongo-back
+  namespace: klab
+spec:
+  jobTemplate:
+    metadata:
+      labels:
+        app: mongo-back
+    spec:
+      template:
+        metadata:
+          labels:
+            app: mongo-back
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: mongo-back
+            image: registry.cn-shanghai.aliyuncs.com/kcr-3rd/mongosqldump:v1
+            imagePullPolicy: IfNotPresent
+            env:
+              - name: MONGO_ROOT_USER
+                value: "admin"                             #admin权限的mongo用户名
+              - name: MONGO_ROOT_PASS
+                value: "postgres"                          #admin权限的用户名密码
+              - name: MONGO_HOST
+                value: "192.168.0.1"                    #mongo数据库的host
+              - name: MONGO_PORT
+                value: "27017"                             #mongo数据库的端口
+              - name: AWS_ACCESS_KEY_ID
+                value: "admin"                             #aws/minio的access_key
+              - name: AWS_SECRET_ACCESS_KEY
+                value: "admin"                        #aws/minio的secret_key
+              - name: AWS_DEFAULT_REGION
+                value: "cn-northwest-1"                    #aws使用的存储区域，minio可以默认不动
+              - name: S3_ENDPOINT_URL
+                value: "http://192.168.0.1:9000"        #aws/minio的url
+              - name: S3_BUCKETS
+                value: "mongo-back"                          #存储数据使用的bucket_name
+              
+            command:
+            - "/bin/sh"
+            - "-c"
+            - |
+              mkdir -p /home/`date +%Y_%m_%d`
+              mongodump -h $MONGO_HOST -p $MONGO_PORT --authenticationDatabase admin  -u $MONGO_ROOT_USER -p $MONGO_ROOT_PASS -o /home/`date +%Y_%m_%d`/
+              tar -cvf /home/`date +%Y_%m_%d`.tar /home/`date +%Y_%m_%d`
+              aws s3 cp /home/`date +%Y_%m_%d`.tar s3://$S3_BUCKETS --endpoint $S3_ENDPOINT_URL       
+  schedule: "\"0 1 * * *\""
+  concurrencyPolicy: Forbid
+  suspend: false
+  ttlSecondsAfterFinished: 100
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1

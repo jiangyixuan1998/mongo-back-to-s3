@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: s3ninjia
+  namespace: klab 
+spec:
+  selector:
+    matchLabels:
+      app: s3ninjia
+  serviceName: s3ninjia
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: s3ninjia
+    spec:
+      containers:
+      - name: s3ninjia
+        image: kcomlabs/s3ninja:latest
+        volumeMounts:
+        - mountPath: /s3ninja/data/s3
+          name: data
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 10Gi
+      storageClassName: longhorn
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: klab
+  name: s3ninjia
+spec:
+  selector:
+    app: s3ninjia
+  ports:
+  - port: 9444
